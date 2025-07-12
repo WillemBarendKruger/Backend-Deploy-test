@@ -1,38 +1,23 @@
-version: '3.9'
-
+ 
 services:
-    abp_host:
-        build:
-            context: ../../
-            dockerfile: src/Potholio.Web.Host/Dockerfile
-        image: healthfile
-        environment:
-            - PORT=80
-            - ASPNETCORE_ENVIRONMENT=Staging
-            - ConnectionStrings__Default=Server=sqlserver;Database=PotholioDb;User=sa;Password=0305;TrustServerCertificate=True;Encrypt=True;
-            - App__ServerRootAddress=http://localhost:44311/
-            - App__ClientRootAddress=http://localhost:4200/
-            - App__CorsOrigins=http://localhost:4200
-            - TZ=America/Toronto
-            - Kestrel__Endpoints__Http__Url=http://+:80
-        ports:
-            - "44311:80"
-        volumes:
-            - ../../dataProtectionKeys:/root/.aspnet/DataProtection-Keys
-        depends_on:
-            - sqlserver
-        restart: always
-
-    sqlserver:
-        image: mcr.microsoft.com/mssql/server:2022-latest
-        container_name: sqlserver
-        environment:
-            - SA_PASSWORD=0305
-            - ACCEPT_EULA=Y
-        ports:
-            - "1433:1433"
-        volumes:
-            - sql_data:/var/opt/mssql
-
-volumes:
-    sql_data:
+ 
+  abp_host:
+    image: abp/host
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Staging"
+      ConnectionStrings__Default: "Server=10.0.75.1; Database=potholioDb; User=potholioUser; Password=YourStrongPassword;TrustServerCertificate=True;"
+      App__ServerRootAddress: "http://localhost:44311/"
+      App__ClientRootAddress: "http://localhost:4200/"
+      App__CorsOrigins: "http://localhost:4200"
+      TZ: "America/Toronto"
+      Kestrel_EndpointsHttp_Url: "http://+:80"
+    ports:
+      - "44311:80"
+    volumes:
+      - "./Host-Logs:/app/App_Data/Logs"
+    restart: always
+ 
+  abp_ng:
+    image: abp/ng
+    ports:
+      - "4200:80"
