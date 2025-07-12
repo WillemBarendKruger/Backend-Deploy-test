@@ -11,4 +11,3 @@ ENV ASPNETCORE_ENVIRONMENT=Docker
 ENV ASPNETCORE_URLS=http://+:80
 EXPOSE 80
 ENTRYPOINT ["dotnet", "potholio.Web.Host.dll"]
-ENTRYPOINT ["dotnet", "potholio.Web.Host.dll"]
