@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+    abp_host:
+        build:
+            context: ../../
+            dockerfile: src/Potholio.Web.Host/Dockerfile
+        image: healthfile
+        environment:
+            - PORT=80
+            - ASPNETCORE_ENVIRONMENT=Staging
+            - ConnectionStrings__Default=Server=sqlserver;Database=PotholioDb;User=sa;Password=0305;TrustServerCertificate=True;Encrypt=True;
+            - App__ServerRootAddress=http://localhost:44311/
+            - App__ClientRootAddress=http://localhost:4200/
+            - App__CorsOrigins=http://localhost:4200
+            - TZ=America/Toronto
+            - Kestrel__Endpoints__Http__Url=http://+:80
+        ports:
+            - "44311:80"
+        volumes:
+            - ../../dataProtectionKeys:/root/.aspnet/DataProtection-Keys
+        depends_on:
+            - sqlserver
+        restart: always
+
+    sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        container_name: sqlserver
+        environment:
+            - SA_PASSWORD=0305
+            - ACCEPT_EULA=Y
+        ports:
+            - "1433:1433"
+        volumes:
+            - sql_data:/var/opt/mssql
+
+volumes:
+    sql_data:
